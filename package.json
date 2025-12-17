@@ -46,9 +46,6 @@
     "safe-buffer": "^5.1.1",
     "xml2js": "^0.4.17"
   },
-  "optionalDependencies": {
-    "abstract-socket": "^2.0.0"
-  },
   "devDependencies": {
     "eslint": "^5.0.0",
     "eslint-config-prettier": "^3.0.0",
@@ -83,6 +80,6 @@
     "trailingComma": "none"
   },
   "engine": {
-    "node": ">=8.0"
+    "node": ">=20.8"
   }
 }
