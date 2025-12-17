@@ -1,11 +1,13 @@
 // simple script to monitor incoming/outcoming dbus messages
 // needs a lot of cleanup but does the job
 
-const net = require('net');
-const through2 = require('through2');
-const optimist = require('optimist');
-const message = require('../lib/message');
-const readLine = require('../lib/readline');
+import net from 'net';
+
+import through2 from 'through2';
+import optimist from 'optimist';
+
+import message from '../lib/message.js';
+import readLine from '../lib/readline.js';
 
 var sessionBusAddress = process.env.DBUS_SESSION_BUS_ADDRESS;
 var m = sessionBusAddress.match(/abstract=([^,]+)/);
@@ -15,7 +17,7 @@ var isSystemBus = optimist.boolean(['system']).argv.system;
 var address = isSystemBus ? '/var/run/dbus/system_bus_socket' : `\0${m[1]}`;
 
 function waitHandshake(stream, prefix, cb) {
-  readLine(stream, function(line) {
+  readLine(stream, function (line) {
     console.log(prefix, line.toString());
     if (
       line.toString().slice(0, 5) === 'BEGIN' ||
@@ -29,13 +31,13 @@ function waitHandshake(stream, prefix, cb) {
 }
 
 net
-  .createServer(function(s) {
+  .createServer(function (s) {
     var buff = '';
     var connected = false;
 
     var cli = net.connect(address);
 
-    s.on('data', function(d) {
+    s.on('data', function (d) {
       if (connected) {
         cli.write(d);
       } else {
@@ -50,26 +52,26 @@ net
     var ss = through2();
 
     // TODO: pipe? streams1 and streams2 here
-    cli.on('data', function(b) {
+    cli.on('data', function (b) {
       cc.write(b);
     });
-    s.on('data', function(b) {
+    s.on('data', function (b) {
       ss.write(b);
     });
 
-    waitHandshake(cc, 'dbus>', function() {
-      message.unmarshalMessages(cc, function(message) {
+    waitHandshake(cc, 'dbus>', function () {
+      message.unmarshalMessages(cc, function (message) {
         console.log('dbus>\n', JSON.stringify(message, null, 2));
       });
     });
 
-    waitHandshake(ss, ' cli>', function() {
-      message.unmarshalMessages(ss, function(message) {
+    waitHandshake(ss, ' cli>', function () {
+      message.unmarshalMessages(ss, function (message) {
         console.log(' cli>\n', JSON.stringify(message, null, 2));
       });
     });
   })
-  .listen(3334, function() {
+  .listen(3334, function () {
     console.log(
       'Server started. connect with DBUS_SESSION_BUS_ADDRESS=tcp:host=127.0.0.1,port=3334'
     );

@@ -1,4 +1,4 @@
-const dbus = require('../../index');
+import dbus from '../../index.js';
 
 var bus = dbus.sessionBus();
 
@@ -12,7 +12,7 @@ bus.invoke(
     signature: 's',
     body: ['does it really work?']
   },
-  function(err, res) {
+  function (err, res) {
     console.log(res);
   }
 );

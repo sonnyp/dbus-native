@@ -25,7 +25,8 @@ export default defineConfig([
     languageOptions: {
       globals: {
         ...globals.node,
-        ...globals.mocha
+        ...globals.mocha,
+        require: 'off'
       },
 
       ecmaVersion: 2025,

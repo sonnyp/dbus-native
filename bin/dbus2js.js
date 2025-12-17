@@ -1,10 +1,15 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const xml2js = require('xml2js');
-const xml2js_opts = Object.assign({}, xml2js.defaults["0.1"], { explicitArray: true });
-const dbus = require('../index');
-const optimist = require('optimist');
+import fs from 'fs';
+
+import xml2js from 'xml2js';
+import optimist from 'optimist';
+
+import dbus from '../index.js';
+
+const xml2js_opts = Object.assign({}, xml2js.defaults['0.1'], {
+  explicitArray: true
+});
 
 var argv = optimist.boolean(['server', 'dump']).argv;
 
@@ -32,20 +37,20 @@ function getXML(callback) {
 }
 
 if (argv.dump) {
-  getXML(function(err, xml) {
+  getXML(function (err, xml) {
     console.log(xml);
     bus.connection.end();
   });
 }
 
 if (!argv.server) {
-  getXML(function(err, xml) {
+  getXML(function (err, xml) {
     if (err) die(err);
 
     var output = [];
 
     var parser = new xml2js.Parser(xml2js_opts);
-    parser.parseString(xml, function(err, result) {
+    parser.parseString(xml, function (err, result) {
       if (err) die(err);
 
       var ifaceName, method, property, iface, arg, signature;
@@ -65,9 +70,9 @@ if (!argv.server) {
         output.push('            if (err) throw new Error(err);');
         output.push('        });');
         output.push(
-          `        var signalFullName = bus.mangle('${argv.path}', '${
-            ifaceName
-          }', signame);`
+          `        var signalFullName = bus.mangle('${
+            argv.path
+          }', '${ifaceName}', signame);`
         );
         output.push(
           '        bus.signals.on(signalFullName, function(messageBody) {'

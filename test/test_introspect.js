@@ -1,14 +1,15 @@
-const introspect = require('../lib/introspect');
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+
+import { processXML } from '../lib/introspect.js';
 
 // Introspection test cases
 var testCases = [{ desc: 'Basic Example', file: 'example' }];
 
-describe('given introspect xml', function() {
+describe('given introspect xml', function () {
   for (var i = 0; i < testCases.length; ++i) {
     var curTest = testCases[i];
-    it('should correctly process ' + curTest.desc, function() {
+    it('should correctly process ' + curTest.desc, function () {
       return testXml(curTest.file);
     });
   }
@@ -16,21 +17,22 @@ describe('given introspect xml', function() {
 
 const dummyObj = {};
 function testXml(fname) {
-  var fpath = path.join(__dirname, 'fixtures', 'introspection', fname);
+  var fpath = path.join(
+    import.meta.dirname,
+    'fixtures',
+    'introspection',
+    fname
+  );
   return new Promise((resolve, reject) => {
     // get expected data from json file
-    fs.readFile(fpath + '.json', 'utf8', function(err, data) {
+    fs.readFile(fpath + '.json', 'utf8', function (err, data) {
       if (err) reject(err);
       var test_obj = JSON.parse(data);
       // get introspect xml from xml file
-      fs.readFile(fpath + '.xml', function(err, xml_data) {
+      fs.readFile(fpath + '.xml', function (err, xml_data) {
         if (err) reject(err);
         else {
-          introspect.processXML(err, xml_data, dummyObj, function(
-            err,
-            proxy,
-            nodes
-          ) {
+          processXML(err, xml_data, dummyObj, function (err, proxy, nodes) {
             if (err) reject(err);
             else {
               checkIntrospection(test_obj, proxy, nodes);

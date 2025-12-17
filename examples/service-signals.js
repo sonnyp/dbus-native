@@ -1,5 +1,6 @@
-const dbus = require('../index');
-const inspect = require('util').inspect;
+import { inspect } from 'util';
+
+import dbus from '../index.js';
 
 /*
 	This example show how to expose signals on a DBus service, and how to emit them.
@@ -49,9 +50,7 @@ sessionBus.requestName(serviceName, 0x4, (err, retCode) => {
 	information
 	*/
     throw new Error(
-      `Failed to request service name "${
-        serviceName
-      }". Check what return code "${retCode}" means.`
+      `Failed to request service name "${serviceName}". Check what return code "${retCode}" means.`
     );
   }
 });
@@ -83,7 +82,7 @@ function proceed() {
 			Here we use the neat ES6 syntax, the spread operator (...), this basically says "bind the first argument in
 			the variable 'signalName' and all others in 'signalOutputParams'"
 		*/
-    emit: function(signalName, ...signalOutputParams) {
+    emit: function (signalName, ...signalOutputParams) {
       /*
 				Now we are in the body of the 'emit()' function of the interface.
 				Just to be clear: you dont NEED to put ANYTHING in this body. When you call 'bus.exportInterface()',

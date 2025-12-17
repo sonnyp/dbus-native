@@ -1,4 +1,4 @@
-const dbus = require('../index');
+import dbus from '../index.js';
 
 /*
 	This test file's purpose is to show how to write a simple, basic DBus service with this library.
@@ -54,9 +54,7 @@ sessionBus.requestName(serviceName, 0x4, (err, retCode) => {
 	information
 	*/
     throw new Error(
-      `Failed to request service name "${
-        serviceName
-      }". Check what return code "${retCode}" means.`
+      `Failed to request service name "${serviceName}". Check what return code "${retCode}" means.`
     );
   }
 });
@@ -83,18 +81,18 @@ function proceed() {
 
   // Then we need to create the interface implementation (with actual functions)
   var iface = {
-    SayHello: function() {
+    SayHello: function () {
       return 'Hello, world!';
     },
-    GiveTime: function() {
+    GiveTime: function () {
       return new Date().toString();
     },
-    Capitalize: function(str) {
+    Capitalize: function (str) {
       return str.toUpperCase();
     },
     Flag: true,
     StringProp: 'initial string',
-    emit: function() {
+    emit: function () {
       // no nothing, as usual
     }
   };

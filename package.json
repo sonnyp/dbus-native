@@ -22,6 +22,7 @@
     "test": "test",
     "examples": "examples"
   },
+  "type": "module",
   "main": "index.js",
   "maintainers": [
     {

@@ -1,8 +1,10 @@
-const fs = require('fs');
-const binarystream = require('binary');
-const EventEmitter = require('events').EventEmitter;
-const message = require('../../lib/message');
-const hexy = require('hexy').hexy;
+import { EventEmitter } from 'events';
+
+import fs from 'fs';
+import binarystream from 'binary';
+import { hexy } from 'hexy';
+
+import message from '../../lib/message';
 
 const packets = fs.readFileSync('./packets.bin');
 
@@ -53,7 +55,7 @@ function readPacket(offset, data) {
   }
   var dbus = new EventEmitter();
   var stream = binarystream.parse(packet);
-  dbus.on('message', function(msg) {
+  dbus.on('message', function (msg) {
     console.log(msg);
     console.log(
       '==================== ',
@@ -63,7 +65,7 @@ function readPacket(offset, data) {
     );
     readPacket(offset + 4 + packet.length, data);
   });
-  dbus.on('header', function(msg) {
+  dbus.on('header', function (msg) {
     console.log('header: ', msg);
     if (msg.signature.length > 1) {
     }
