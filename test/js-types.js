@@ -1,7 +1,7 @@
-import assert from 'assert';
+import assert from "assert";
 
-import marshall from '../lib/marshall.js';
-import unmarshall from '../lib/unmarshall.js';
+import marshall from "../lib/marshall.js";
+import unmarshall from "../lib/unmarshall.js";
 
 function test(signature, data) {
   var marshalledBuffer = marshall(signature, data);
@@ -9,17 +9,17 @@ function test(signature, data) {
   try {
     assert.deepStrictEqual(data, result);
   } catch {
-    console.log('signature   :', signature);
-    console.log('orig        :', data);
-    console.log('unmarshalled:', result);
+    console.log("signature   :", signature);
+    console.log("orig        :", data);
+    console.log("unmarshalled:", result);
     throw new Error("results don't match");
   }
 }
 
-describe('when signature is a{sX} and hashAsObject is used', function () {
-  xit('serialises to expected value', function () {
-    test('a{sv}', {
-      test1: { subobj: { a1: 10, a2: 'qqq', a3: 1.11 }, test2: 12 }
+describe("when signature is a{sX} and hashAsObject is used", function () {
+  xit("serialises to expected value", function () {
+    test("a{sv}", {
+      test1: { subobj: { a1: 10, a2: "qqq", a3: 1.11 }, test2: 12 },
     });
   });
 });

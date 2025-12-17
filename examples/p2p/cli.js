@@ -1,8 +1,8 @@
-import dbus from '../../index.js';
+import dbus from "../../index.js";
 
 var count = 0;
-const conn = dbus.createConnection({ port: 3333, handshake: 'none' });
-conn.on('message', function (msg) {
+const conn = dbus.createConnection({ port: 3333, handshake: "none" });
+conn.on("message", function (msg) {
   if (msg.serial) {
     msg.serial += 1;
   } else {
