@@ -1,4 +1,3 @@
-const Buffer = require('safe-buffer').Buffer;
 const net = require('net');
 const hexy = require('hexy').hexy;
 const buffs = require('buffers');
@@ -21,25 +20,25 @@ function nextPacketPos(b) {
 var packetfile = fs.createWriteStream('./packets.bin');
 
 net
-  .createServer(function(s) {
+  .createServer(function (s) {
     var buff = '';
     var b = buffs();
     var connected = false;
     var cli = net.createConnection('\0/tmp/dbus-WDSwP4V64O');
-    s.on('data', function(d) {
+    s.on('data', function (d) {
       if (connected) {
         cli.write(d);
       } else {
         buff += d.toString();
       }
     });
-    s.on('end', function() {
+    s.on('end', function () {
       packetfile.end(b.toBuffer());
     });
-    cli.on('end', function() {
+    cli.on('end', function () {
       packetfile.end(b.toBuffer());
     });
-    cli.on('data', function(d) {
+    cli.on('data', function (d) {
       console.error(hexy(d, { prefix: 'from bus   ' }));
       b.push(d);
       function extractPacket() {
@@ -70,9 +69,6 @@ net
     console.log('connected to 3000');
     connected = true;
     cli.write(buff);
-    cli.pipe(
-      s,
-      { end: false }
-    );
+    cli.pipe(s, { end: false });
   })
   .listen(7000, '0.0.0.0');

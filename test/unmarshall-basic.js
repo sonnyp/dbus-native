@@ -1,8 +1,9 @@
-const Buffer = require('safe-buffer').Buffer;
-const marshall = require('../lib/marshall');
-const unmarshall = require('../lib/unmarshall');
-const assert = require('assert');
-const Long = require('long');
+import assert from 'assert';
+
+import Long from 'long';
+
+import marshall from '../lib/marshall.js';
+import unmarshall from '../lib/unmarshall.js';
 
 var LongMaxS64 = Long.fromString('9223372036854775807', false);
 var LongMinS64 = Long.fromString('-9223372036854775808', false);
@@ -33,7 +34,7 @@ function test(signature, data, other_result, unmarshall_opts) {
     } else {
       assert.deepStrictEqual(data, result);
     }
-  } catch (e) {
+  } catch {
     console.log('signature   :', signature);
     console.log('orig        :', data);
     console.log('unmarshalled:', result);
@@ -52,13 +53,13 @@ var b30000bytes = Buffer.alloc(30000, 60);
 var str30000chars = b30000bytes.toString('ascii');
 
 function expectMarshallToThrowOnBadArguments(badSig, badData, errorRegex) {
-  assert.throws(function() {
+  assert.throws(function () {
     marshall(badSig, badData);
   }, errorRegex);
 }
 
-describe('marshall', function() {
-  it('throws error on bad data', function() {
+describe('marshall', function () {
+  it('throws error on bad data', function () {
     var badData = [
       ['s', [3], /Expected string or buffer argument/],
       ['s', ['as\0df'], /String contains null byte/],
@@ -145,7 +146,7 @@ describe('marshall', function() {
       expectMarshallToThrowOnBadArguments(badSig, badDatum, errorRegex);
     }
   });
-  it('throws error on bad signature', function() {
+  it('throws error on bad signature', function () {
     var badSig = '1';
     var badData = 1;
     expectMarshallToThrowOnBadArguments(
@@ -156,7 +157,7 @@ describe('marshall', function() {
   });
 });
 
-describe('marshall/unmarshall', function() {
+describe('marshall/unmarshall', function () {
   // signature, data, not expected to fail?, data after unmarshall (when expected to convert to canonic form and different from input), unmarshall_options
   var tests = {
     'simple types': [
@@ -312,34 +313,93 @@ describe('marshall/unmarshall', function() {
     ],
     'arrays of simple types': [
       ['ai', [[1, 2, 3, 4, 5, 6, 7]]],
-      ['aai', [[[300, 400, 500], [1, 2, 3, 4, 5, 6, 7]]]],
-      ['aiai', [[1, 2, 3], [300, 400, 500]]]
+      [
+        'aai',
+        [
+          [
+            [300, 400, 500],
+            [1, 2, 3, 4, 5, 6, 7]
+          ]
+        ]
+      ],
+      [
+        'aiai',
+        [
+          [1, 2, 3],
+          [300, 400, 500]
+        ]
+      ]
     ],
     'compound types': [
       ['iyai', [10, 100, [1, 2, 3, 4, 5, 6]]],
       // TODO: fix 'array of structs offset problem
-      ['a(iyai)', [[[10, 100, [1, 2, 3, 4, 5, 6]], [11, 200, [15, 4, 5, 6]]]]],
+      [
+        'a(iyai)',
+        [
+          [
+            [10, 100, [1, 2, 3, 4, 5, 6]],
+            [11, 200, [15, 4, 5, 6]]
+          ]
+        ]
+      ],
       [
         'sa(iyai)',
         [
           'test test test test',
-          [[10, 100, [1, 2, 3, 4, 5, 6]], [11, 200, [15, 4, 5, 6]]]
+          [
+            [10, 100, [1, 2, 3, 4, 5, 6]],
+            [11, 200, [15, 4, 5, 6]]
+          ]
         ]
       ],
-      ['a(iyai)', [[[10, 100, [1, 2, 3, 4, 5, 6]], [11, 200, [15, 4, 5, 6]]]]],
-      ['a(yai)', [[[100, [1, 2, 3, 4, 5, 6]], [200, [15, 4, 5, 6]]]]],
+      [
+        'a(iyai)',
+        [
+          [
+            [10, 100, [1, 2, 3, 4, 5, 6]],
+            [11, 200, [15, 4, 5, 6]]
+          ]
+        ]
+      ],
+      [
+        'a(yai)',
+        [
+          [
+            [100, [1, 2, 3, 4, 5, 6]],
+            [200, [15, 4, 5, 6]]
+          ]
+        ]
+      ],
       [
         'a(yyai)',
-        [[[100, 101, [1, 2, 3, 4, 5, 6]], [200, 201, [15, 4, 5, 6]]]]
+        [
+          [
+            [100, 101, [1, 2, 3, 4, 5, 6]],
+            [200, 201, [15, 4, 5, 6]]
+          ]
+        ]
       ],
       [
         'a(yyyai)',
-        [[[100, 101, 102, [1, 2, 3, 4, 5, 6]], [200, 201, 202, [15, 4, 5, 6]]]]
+        [
+          [
+            [100, 101, 102, [1, 2, 3, 4, 5, 6]],
+            [200, 201, 202, [15, 4, 5, 6]]
+          ]
+        ]
       ],
       ['ai', [[1, 2, 3, 4, 5, 6]]],
       ['aii', [[1, 2, 3, 4, 5, 6], 10]],
       ['a(ai)', [[[[1, 2, 3, 4, 5, 6]], [[15, 4, 5, 6]]]]],
-      ['aai', [[[1, 2, 3, 4, 5, 6], [15, 4, 5, 6]]]]
+      [
+        'aai',
+        [
+          [
+            [1, 2, 3, 4, 5, 6],
+            [15, 4, 5, 6]
+          ]
+        ]
+      ]
     ],
     buffers: [
       ['ayay', [Buffer.from([0, 1, 2, 3, 4, 5, 6, 0xff]), Buffer.from([])]]
@@ -355,14 +415,14 @@ describe('marshall/unmarshall', function() {
       )}`;
       if (testData[2] === false) {
         // should fail
-        (function(testData) {
-          it(testDesc, function() {
+        (function (testData) {
+          it(testDesc, function () {
             test(testData[0], testData[1], testData[3], testData[4]);
           });
         })(testData);
       } else {
-        (function(testData) {
-          it(testDesc, function() {
+        (function (testData) {
+          it(testDesc, function () {
             test(testData[0], testData[1], testData[3], testData[4]);
           });
         })(testData);
