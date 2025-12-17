@@ -44,5 +44,11 @@ export default defineConfig([
       'no-console': 'off',
       'no-empty': 'off'
     }
+  },
+  {
+    languageOptions: {
+      sourceType: 'module'
+    },
+    files: ['examples/**.js']
   }
 ]);
