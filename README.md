@@ -1,44 +1,55 @@
-node-dbus
-===========
+# dbus.js
 
-Installation
-------------
+> D-Bus (short for "Desktop Bus") is a message-oriented middleware mechanism that allows communication between multiple processes running concurrently on the same machine. D-Bus was developed as part of the freedesktop.org project, initiated by GNOME developer Havoc Pennington to standardize services provided by Linux desktop environments such as GNOME and KDE Plasma.
 
-```shell
-npm install dbus-native
+https://en.wikipedia.org/wiki/D-Bus
+
+**dbus.js** is a JavaScrpt library for [D-Bus](https://www.freedesktop.org/wiki/Software/dbus/).
+
+This is a fork of [dbus-native](https://github.com/sidorares/dbus-native) that brings:
+
+* replace callbacks with async / await
+* migrate from commonjs to ESM
+* replace abstract-socket dependency with Node.js builtin support
+* update dependencies
+
+```sh
+npm install dbus.js
 ```
-or
-
-```shell
-git clone https://github.com/sidorares/node-dbus # clone the repo
-cd node-dbus
-npm install # install dependencies
-sudo cp examples/com.github.sidorares.dbus.Example.conf /etc/dbus-1/system.d/ # if you want to test examples/service.js
-```
-
-Usage
-------
-
-Short example using desktop notifications service
 
 ```js
-var dbus = require('dbus-native');
-var sessionBus = dbus.sessionBus();
-sessionBus.getService('org.freedesktop.Notifications').getInterface(
-    '/org/freedesktop/Notifications',
-    'org.freedesktop.Notifications', function(err, notifications) {
+import dbus from "dbus.js";
 
-    // dbus signals are EventEmitter events
-    notifications.on('ActionInvoked', function() {
-        console.log('ActionInvoked', arguments);
-    });
-    notifications.on('NotificationClosed', function() {
-        console.log('NotificationClosed', arguments);
-    });
-    notifications.Notify('exampl', 0, '', 'summary 3', 'new message text', ['xxx yyy', 'test2', 'test3', 'test4'], [],  5, function(err, id) {
-       //setTimeout(function() { n.CloseNotification(id, console.log); }, 4000);
-    });
+const bus = dbus.sessionBus();
+const service = bus.getService("org.freedesktop.Notifications");
+const iface = await service.getInterface(
+  "/org/freedesktop/Notifications",
+  "org.freedesktop.Notifications",
+);
+console.log(iface);
+
+// dbus signals are EventEmitter events
+iface.on("ActionInvoked", (...args) => {
+  console.log("ActionInvoked", ...args);
 });
+
+iface.on("NotificationClosed", (...args) => {
+  console.log("NotificationClosed", ...args);
+});
+
+const [id] = await iface.Notify(
+  "exampl",
+  0,
+  "",
+  "summary 3",
+  "new message text",
+  ["xxx yyy", "test2", "test3", "test4"],
+  [],
+  5,
+);
+console.log("Notificaton id", id);
+
+setTimeout(() => iface.CloseNotification(id), 4000);
 ```
 
 API
@@ -80,8 +91,8 @@ connection signals:
 example:
 
 ```js
-var dbus = require('dbus-native');
-var conn = dbus.createConnection();
+import dbus from "dbus.js";
+const conn = dbus.createConnection();
 conn.message({
     path:'/org/freedesktop/DBus',
     destination: 'org.freedesktop.DBus',
@@ -89,7 +100,9 @@ conn.message({
     member: 'Hello',
     type: dbus.messageType.methodCall
 });
-conn.on('message', function(msg) { console.log(msg); });
+conn.on('message', (msg) => {
+  console.log(msg);
+});
 ```
 
 ### Note on INT64 'x' and UINT64 't'

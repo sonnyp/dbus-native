@@ -1,19 +1,23 @@
 import dbus from "../index.js";
 
-var bus = dbus.sessionBus();
-var notify = bus.getService("org.freedesktop.Notifications");
-const nm = await notify.getInterface(
+const bus = dbus.sessionBus();
+const service = bus.getService("org.freedesktop.Notifications");
+const iface = await service.getInterface(
   "/org/freedesktop/Notifications",
   "org.freedesktop.Notifications",
 );
-console.log(nm);
-nm.on("ActionInvoked", function () {
-  console.log("ActionInvoked", arguments);
+console.log(iface);
+
+// dbus signals are EventEmitter events
+iface.on("ActionInvoked", (...args) => {
+  console.log("ActionInvoked", ...args);
 });
-nm.on("NotificationClosed", function () {
-  console.log("NotificationClosed", arguments);
+
+iface.on("NotificationClosed", (...args) => {
+  console.log("NotificationClosed", ...args);
 });
-await nm.Notify(
+
+const [id] = await iface.Notify(
   "exampl",
   0,
   "",
@@ -23,3 +27,6 @@ await nm.Notify(
   [],
   5,
 );
+console.log("Notificaton id", id);
+
+setTimeout(() => iface.CloseNotification(id), 4000);

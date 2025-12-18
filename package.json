@@ -1,15 +1,17 @@
 {
-  "name": "dbus-native",
-  "author": "Andrey Sidorov <sidorares@yandex.com>",
-  "version": "0.4.0",
+  "name": "dbus.js",
+  "author": "Sonny Piers <sonny@fastmail.net>",
+  "version": "0.1.0",
   "keywords": [
     "dbus",
-    "dcop",
     "d-bus",
     "rpc",
     "gnome",
-    "kde"
+    "kde",
+    "freedesktop",
+    "linux"
   ],
+  "type": "module",
   "description": "D-bus protocol implementation in native javascript",
   "files": [
     "bin/dbus2js.js",
@@ -32,7 +34,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "http://github.com/sidorares/node-dbus.git"
+    "url": "http://github.com/sonnyp/dbus.js.git"
   },
   "bin": {
     "dbus2js": "./bin/dbus2js.js"
