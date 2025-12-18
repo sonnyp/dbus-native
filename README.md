@@ -12,6 +12,10 @@ This is a fork of [dbus-native](https://github.com/sidorares/dbus-native) that b
 * migrate from commonjs to ESM
 * replace abstract-socket dependency with Node.js builtin support
 * update dependencies
+* misleading EventEmitter API replaced
+  * `on`/`addListener` -> `subscribe()`
+  * `off`/`removeListener` -> `unsubscribe()`
+  * `emit` -> `signal()`
 
 ```sh
 npm install dbus.js
@@ -28,12 +32,11 @@ const iface = await service.getInterface(
 );
 console.log(iface);
 
-// dbus signals are EventEmitter events
-iface.on("ActionInvoked", (...args) => {
+await iface.subscribe("ActionInvoked", (...args) => {
   console.log("ActionInvoked", ...args);
 });
 
-iface.on("NotificationClosed", (...args) => {
+await iface.subscribe("NotificationClosed", (...args) => {
   console.log("NotificationClosed", ...args);
 });
 

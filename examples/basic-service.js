@@ -85,9 +85,6 @@ function proceed() {
     },
     Flag: true,
     StringProp: "initial string",
-    emit: function () {
-      // no nothing, as usual
-    },
   };
 
   // Now we need to actually export our interface on our object
@@ -99,7 +96,7 @@ function proceed() {
   setInterval(() => {
     var rand = Math.round(Math.random() * 100);
     if (rand > 75) {
-      iface.emit("Rand", Math.round(Math.random() * 100));
+      iface.signal("Rand", Math.round(Math.random() * 100));
     }
   }, 2000);
 }

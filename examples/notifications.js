@@ -8,12 +8,11 @@ const iface = await service.getInterface(
 );
 console.log(iface);
 
-// dbus signals are EventEmitter events
-iface.on("ActionInvoked", (...args) => {
+await iface.subscribe("ActionInvoked", (...args) => {
   console.log("ActionInvoked", ...args);
 });
 
-iface.on("NotificationClosed", (...args) => {
+await iface.subscribe("NotificationClosed", (...args) => {
   console.log("NotificationClosed", ...args);
 });
 

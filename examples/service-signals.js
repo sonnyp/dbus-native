@@ -1,5 +1,3 @@
-import { inspect } from "util";
-
 import dbus from "../index.js";
 
 /*
@@ -63,39 +61,8 @@ function proceed() {
     properties: {},
   };
 
-  // Then we need to create the interface implementation, with the 'emit' field
-  var iface = {
-    /*
-			So what's going one here, in order for your DBus service to be able to emit signals, you must define one
-			function in your interface object with name 'emit'. This should be a function which takes several
-			parameters: the first parameter is the name of the signal to fire, and the rest of the parameters are the
-			actual signal OUTPUT values (a signal doesn't take input parameters).
-
-			Here we use the neat ES6 syntax, the spread operator (...), this basically says "bind the first argument in
-			the variable 'signalName' and all others in 'signalOutputParams'"
-		*/
-    emit: function (signalName, ...signalOutputParams) {
-      /*
-				Now we are in the body of the 'emit()' function of the interface.
-				Just to be clear: you dont NEED to put ANYTHING in this body. When you call 'bus.exportInterface()',
-				for each signals that is defined in your interface description object, there will be a new 'emit'
-				function created that will simply fire the signal.
-				Then, after one emit function is defined for the signal, this emit's function will be called.
-
-				So really, everything that inside this emit function serves just as debugging or logging. If you're
-				only interested in emitting a signal, then all you have to do is create this emit function in the
-				interface objet, and do nothing. The signal swill be emitted just fine.
-
-				Here, we are only putting some logging to show where the signals are emitted.
-			*/
-
-      console.log(
-        `Signal '${signalName}' emitted with values: ${inspect(
-          signalOutputParams,
-        )}`,
-      );
-    },
-  };
+  // Then we need to create the interface implementation, it doesn't have any method or property
+  var iface = {};
   // Now we need to actually export our interface on our object
   sessionBus.exportInterface(iface, objectPath, ifaceDesc);
 
@@ -103,16 +70,16 @@ function proceed() {
   console.log("Interface exposed to DBus, ready to receive function calls!");
 
   /*
-		Here we emit the 'Tick' signal every 10 seconds. As you see, emitting a signal is just calling the 'emit()'
+		Here we emit the 'Tick' signal every 10 seconds. As you see, emitting a signal is just calling the 'signal()'
 		function of the interface object with the first parameters being the signal name, and the other paramters, the
 		actual output values of the signal.
 	*/
   setInterval(() => {
-    iface.emit("Tick", new Date().toString());
+    iface.signal("Tick", new Date().toString());
   }, 10e3);
 
   /*
-		Here we emit another signal, 'Rand'. As you noticed, the 'emit()' function doesn't change whether we expose
+		Here we emit another signal, 'Rand'. As you noticed, the 'signal()' function doesn't change whether we expose
 		one or several signals.
 		The random here is just so that the signals are not emitted too regularly (contrary to 'Tick')
 	*/
@@ -121,7 +88,7 @@ function proceed() {
 
     if (proba > 70) {
       var randomNumber = Math.round(Math.random() * 100);
-      iface.emit("Rand", randomNumber);
+      iface.signal("Rand", randomNumber);
     }
   }, 2000);
 }

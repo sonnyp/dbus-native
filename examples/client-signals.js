@@ -31,27 +31,21 @@ if (!sessionBus) {
 const targetService = sessionBus.getService(targetServiceName);
 
 // Then we must query it's interface, this is callback-based
-targetService.getInterface(targetObjectPath, targetIfaceName, (err, iface) => {
-  // we need to check for error
-  if (err || !iface) {
-    console.error(
-      `Could not query interface '${targetIfaceName}', the error was: ${err}`,
-    );
-    process.exit(1);
-  }
+const iface = await targetService.getInterface(
+  targetObjectPath,
+  targetIfaceName,
+);
 
-  /*
-		Here, 'iface' represents the service's interface. It is made an event emitter, so to listen to signals, we
-		just have to do like any other signals: on('signalName')
+/*
+		Here, 'iface' represents the service's interface. Here is how to listen for signals
 	*/
-  iface.on("Tick", (date) => {
-    console.log(`Signal 'Tick' received! The date is: '${date}'`);
-  });
+await iface.subscribe("Tick", (date) => {
+  console.log(`Signal 'Tick' received! The date is: '${date}'`);
+});
 
-  /*
+/*
 		Here we listen for the second signal.
 	*/
-  iface.on("Rand", (randomNumber) => {
-    console.log(`We've got our random number: ${randomNumber}`);
-  });
+await iface.subscribe("Rand", (randomNumber) => {
+  console.log(`We've got our random number: ${randomNumber}`);
 });

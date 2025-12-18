@@ -36,15 +36,12 @@ var example = {
     return `Received "${s}" - this is a reply`;
   },
   TestProperty: 42,
-  emit: function (name, param1, param2) {
-    console.log("signal emit", name, param1, param2);
-  },
 };
 bus.exportInterface(example, "/com/github/sidorares/1", exampleIface);
 bus.exportInterface(example, "/com/github/sidorares/2", exampleIface);
 
 //setInterval( function() {
-//    example.emit('testsignal', Date.now(), 'param2');
+//    example.signal('testsignal', Date.now(), 'param2');
 //}, 1000);
 
 //});

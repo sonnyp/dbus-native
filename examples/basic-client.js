@@ -35,5 +35,6 @@ console.log(`GiveTime returned: ${time}`);
 const str = await iface.Capitalize("Hello, World!");
 console.log(`Capitalize returned: ${str}`);
 
-const nb = await iface.on("Rand");
-console.log(`Received Rand: ${nb}`);
+await iface.subscribe("Rand", (nb) => {
+  console.log(`Received Rand: ${nb}`);
+});
